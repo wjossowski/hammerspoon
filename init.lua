@@ -4,9 +4,9 @@ local chrome = require("modules.chrome")
 
 local config = {
   profiles = {
-    silent = { key = 's', label = 'Distractors' },
-    work = { key = 'w', label = 'Work' },
-    napravelo = { key = 'n', label = 'Work:Napravelo' }
+    silent = { key = 's', label = 'Silent', active = false },
+    work = { key = 'w', label = 'Work', active = true },
+    napravelo = { key = 'n', label = 'Work:Napravelo', active = true }
   },
   keyboard_mods = {
     hyper = { "ctrl", "alt", "cmd", "shift" },
@@ -27,13 +27,13 @@ local config = {
 
     -- Browsing
     ["i"] = { name = "Google Chrome", },
-    ["u"] = { handler = chrome.handleFocus('personal') },
-    ["o"] = { handler = chrome.handleFocus('napravelo') },
+    ["u"] = { name = "Google Chrome: Personal", handler = chrome.handleFocus('personal') },
+    ["o"] = { name = "Google Chrome: Napravelo", handler = chrome.handleFocus('napravelo'), napravelo = true },
 
     -- Chats
     ["s"] = { name = "Discord", napravelo = true },
-    ["x"] = { name = "Messenger", distractor = true },
-    ["v"] = { name = "Telegram" },
+    ["x"] = { name = "Messenger", silent = false },
+    ["v"] = { name = "Telegram", silent = false },
 
     -- Misc
     ["m"] = { name = "Spotify", },

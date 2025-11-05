@@ -13,7 +13,8 @@ local function logState()
   validate()
   local msg = "SETUP:"
   for _, val in pairs(M.state) do
-    msg = msg .. "\n  " .. val.label .. " (" .. val.key .. ")" .. " : " .. (val.active and "on" or "off")
+    msg = msg .. "\n  " .. val.label
+        .. " (" .. val.key .. ")" .. " : " .. (val.active and "on" or "off")
   end
   logger.log(msg)
 end
@@ -24,7 +25,7 @@ function M.setup(config)
     M.state[key] = {
       label = profile.label,
       key = profile.key,
-      active = false,
+      active = profile.active
     }
   end
 
@@ -41,9 +42,22 @@ function M.setup(config)
   for hotkey, app in pairs(config.apps) do
     hs.hotkey.bind(config.keyboard_mods.hyper, hotkey, function()
       validate()
-      for flag, enabled in pairs(M.state) do
-        if enabled == false and app[flag] then return end
+
+      local run = false
+
+      for profileKey, profile in pairs(M.state) do
+        if profile.active and app[profileKey] == false then
+          run = false
+        elseif profile.active and app[profileKey] == true then
+          run = true
+        elseif not profile.active and app[profileKey] == false then
+          run = true
+        end
       end
+
+
+      if not run then return end
+
       if app.handler then
         app.handler()
       elseif app.name then
