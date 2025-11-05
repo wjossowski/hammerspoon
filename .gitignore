@@ -1,0 +1,55 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Build / Output
+dist/
+build/
+out/
+.next/
+.swc/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# OS files
+.DS_Store
+
+# Tests / Coverage
+coverage/
+.nyc_output/
+
+# IDEs & Editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+.vscode/*
+
+# Environment
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Monorepo / Tooling
+.turbo/
+
+# Project-specific
+/notes
+apps/**/assets/*.json
+
+*.pem
+
