@@ -1,62 +1,60 @@
-local logger = require('modules.logger')
+local logger = require("modules.logger")
 local screen = require("modules.screen")
 
-local M      = {}
+local M = { state = nil }
 
-local function flag(label, isOn)
-  return '\n  ' .. label .. ' : ' .. (isOn and 'on' or 'off')
+local function validate()
+  if not M.state then
+    error("apps.setup() must be called before use")
+  end
 end
 
-function M.setup(profile, mods, apps)
-  local work = true
-  local napravelo = true
-  local distractors = true
-  local follow = false
+local function logState()
+  validate()
+  local msg = "SETUP:"
+  for _, val in pairs(M.state) do
+    msg = msg .. "\n  " .. val.label .. " (" .. val.key .. ")" .. " : " .. (val.active and "on" or "off")
+  end
+  logger.log(msg)
+end
 
-  hs.hotkey.bind(mods.pos, '1', function()
-    logger.log("SETUP:" ..
-      flag('follow', follow) ..
-      flag('distractors', distractors) ..
-      flag('work', work) ..
-      flag('napravelo', napravelo)
-    )
-  end)
+function M.setup(config)
+  M.state = {}
+  for key, profile in pairs(config.profiles) do
+    M.state[key] = {
+      label = profile.label,
+      key = profile.key,
+      active = false,
+    }
+  end
 
-  hs.hotkey.bind(mods.pos, profile['silent'], function()
-    distractors = not distractors
-    logger.log("Distractors: " .. (distractors and ' ON' or 'OFF'))
-  end)
+  hs.hotkey.bind(config.keyboard_mods.pos, "1", logState)
 
-  hs.hotkey.bind(mods.pos, profile['napravelo'], function()
-    napravelo = not napravelo
-    logger.log("Napravelo: " .. (napravelo and ' ON' or 'OFF'))
-  end)
-
-  hs.hotkey.bind(mods.pos, profile['work'], function()
-    work = not work
-    logger.log("Work: " .. (work and ' ON' or 'OFF'))
-  end)
-
-  hs.hotkey.bind(mods.pos, profile['follow'], function()
-    follow = screen.setFollowMode(not follow)
-    logger.log("Follow: " .. (follow and ' ON' or 'OFF'))
-  end)
-
-  for key, target in pairs(apps) do
-    hs.hotkey.bind(mods.hyper, key, function()
-      if not napravelo and target.napravelo then return end
-      if not work and target.work then return end
-      if not distractors and target.distractor then return end
-      if (target.handler) then
-        target.handler()
-      else
-        hs.application.launchOrFocus(target.name)
-        hs.timer.doAfter(0.1, function() screen.centerOn(hs.window.focusedWindow()) end)
-      end
+  for key, profile in pairs(config.profiles) do
+    hs.hotkey.bind(config.keyboard_mods.pos, profile.key, function()
+      validate()
+      M.state[key].active = not M.state[key].active
+      logger.log(profile.label .. ": " .. (M.state[key] and " ON" or "OFF"))
     end)
   end
 
-  return screen
+  for hotkey, app in pairs(config.apps) do
+    hs.hotkey.bind(config.keyboard_mods.hyper, hotkey, function()
+      validate()
+      for flag, enabled in pairs(M.state) do
+        if enabled == false and app[flag] then return end
+      end
+      if app.handler then
+        app.handler()
+      elseif app.name then
+        hs.application.launchOrFocus(app.name)
+        hs.timer.doAfter(0.1, function()
+          local win = hs.window.focusedWindow()
+          if win then screen.centerOn(win) end
+        end)
+      end
+    end)
+  end
 end
 
 return M

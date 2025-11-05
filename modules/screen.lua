@@ -1,25 +1,24 @@
-local followMode = false
-
-local M = {}
-
-function M.setFollowMode(mode)
-  followMode = mode
-  return followMode
-end
-
-function M.centerOn(win, force)
-  if win and (followMode or force) then
-    local frame = win:frame()
-    local center = hs.geometry.point(frame.x + frame.w / 2, frame.y + frame.h / 2)
-    hs.mouse.absolutePosition(center)
-  end
-end
+local M = { followMode = false }
 
 local function window(cb)
   local win = hs.window.focusedWindow()
   if win then
     cb(win)
     M.centerOn(win)
+  end
+end
+
+
+function M.setFollowMode(mode)
+  M.followMode = mode
+  return M.followMode
+end
+
+function M.centerOn(win, force)
+  if win and (M.followMode or force) then
+    local frame = win:frame()
+    local center = hs.geometry.point(frame.x + frame.w / 2, frame.y + frame.h / 2)
+    hs.mouse.absolutePosition(center)
   end
 end
 
