@@ -2,11 +2,18 @@ local screen = require('modules.screen')
 local apps = require("modules.apps")
 local chrome = require("modules.chrome")
 
+chrome.setup({
+  profiles = {
+    personal = 'Default',
+    napravelo = 'Profile 1',
+  }
+})
+
 local config = {
   profiles = {
-    silent = { key = 's', label = 'Silent', active = false },
-    work = { key = 'w', label = 'Work', active = true },
-    napravelo = { key = 'n', label = 'Work:Napravelo', active = true }
+    silent = { order = 1, key = 's', label = 'Silent', active = false, warn = 'GO BACK TO WORK SLACKER' },
+    work = { order = 2, key = 'w', label = 'Work', active = true },
+    napravelo = { order = 3, key = 'n', label = 'Napravelo', active = true }
   },
   keyboard_mods = {
     hyper = { "ctrl", "alt", "cmd", "shift" },
@@ -17,7 +24,10 @@ local config = {
     napravelo = 'Profile 1',
   },
   apps = {
-    -- Work
+    ["i"] = { name = "Google Chrome", },
+    ["u"] = { name = "Google Chrome: Personal", handler = chrome.handleFocus('personal') },
+    ["o"] = { name = "Google Chrome: Napravelo", handler = chrome.handleFocus('napravelo'), napravelo = true },
+
     ["f"] = { name = "Figma", work = true, napravelo = true },
     ["t"] = { name = "Linear", work = true, napravelo = true },
     ["d"] = { name = "DBeaver", work = true, napravelo = true },
@@ -25,17 +35,10 @@ local config = {
     ["p"] = { name = "Visual Studio Code", work = true },
     ["e"] = { name = "Docker Desktop", work = true },
 
-    -- Browsing
-    ["i"] = { name = "Google Chrome", },
-    ["u"] = { name = "Google Chrome: Personal", handler = chrome.handleFocus('personal') },
-    ["o"] = { name = "Google Chrome: Napravelo", handler = chrome.handleFocus('napravelo'), napravelo = true },
-
-    -- Chats
     ["s"] = { name = "Discord", napravelo = true },
     ["x"] = { name = "Messenger", silent = false },
     ["v"] = { name = "Telegram", silent = false },
 
-    -- Misc
     ["m"] = { name = "Spotify", },
     ["g"] = { name = "Finder", },
     ["1"] = { name = "1Password", }
@@ -53,13 +56,6 @@ local positions = {
   ["."] = { 0.5, 0.5, 0.5, 0.5 }, -- bottom-right
   ["k"] = { 0, 0, 1, 1 },         -- maximized
 }
-
-chrome.setup({
-  profiles = {
-    personal = 'Default',
-    napravelo = 'Profile 1',
-  }
-})
 
 apps.setup(config)
 
