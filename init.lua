@@ -11,9 +11,11 @@ chrome.setup({
 
 local config = {
   profiles = {
-    silent = { order = 1, key = 's', label = 'Silent', active = false, warn = 'GO BACK TO WORK SLACKER' },
-    work = { order = 2, key = 'w', label = 'Work', active = true },
-    napravelo = { order = 3, key = 'n', label = 'Napravelo', active = true }
+    quiet = { order = 1, key = 'q', label = 'Quiet', active = false, warn = 'GO BACK TO WORK SLACKER' },
+    work = { order = 2, key = 'w', label = 'Work', active = true, off = { 'napravelo' } },
+    napravelo = { order = 3, key = 'e', label = 'Napravelo', active = true, on = { 'work' }, off = { 'napravelo_infra', 'napravelo_dbeaver' } },
+    napravelo_infra = { order = 4, key = 's', label = 'Napravelo:Infra', active = false, on = { 'napravelo' } },
+    napravelo_dbeaver = { order = 5, key = 'd', label = 'Napravelo:DBeaver', active = false, on = { 'napravelo' } },
   },
   keyboard_mods = {
     hyper = { "ctrl", "alt", "cmd", "shift" },
@@ -24,20 +26,20 @@ local config = {
     napravelo = 'Profile 1',
   },
   apps = {
-    ["i"] = { name = "Google Chrome", },
+    ["i"] = { name = "Google Chrome", napravelo = false },
     ["u"] = { name = "Google Chrome: Personal", handler = chrome.handleFocus('personal') },
     ["o"] = { name = "Google Chrome: Napravelo", handler = chrome.handleFocus('napravelo'), napravelo = true },
 
-    ["f"] = { name = "Figma", work = true, napravelo = true },
-    ["t"] = { name = "Linear", work = true, napravelo = true },
-    ["d"] = { name = "DBeaver", work = true, napravelo = true },
+    ["f"] = { name = "Figma", napravelo = true },
+    ["t"] = { name = "Linear", napravelo = true },
+    ["d"] = { name = "DBeaver", napravelo_dbeaver = true },
     ["]"] = { name = "iTerm", work = true },
     ["p"] = { name = "Visual Studio Code", work = true },
-    ["e"] = { name = "Docker Desktop", work = true },
+    ["e"] = { name = "Docker Desktop", napravelo_infra = true },
 
     ["s"] = { name = "Discord", napravelo = true },
-    ["x"] = { name = "Messenger", silent = false },
-    ["v"] = { name = "Telegram", silent = false },
+    ["x"] = { name = "Messenger", quiet = false },
+    ["v"] = { name = "Telegram", quiet = false },
 
     ["m"] = { name = "Spotify", },
     ["g"] = { name = "Finder", },

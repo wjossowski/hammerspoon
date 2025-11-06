@@ -36,6 +36,18 @@ local function logState(time)
   logger.log(table.concat(lines, "\n"), time)
 end
 
+local function toggle(key, newState)
+  local profile = M.state[key]
+  if profile == nil then return end
+  local toggler = (newState == true and profile.on)
+      or (newState == false and profile.off)
+      or {}
+  for _, child in pairs(toggler) do
+    toggle(child, newState)
+  end
+  profile.active = newState
+end
+
 function M.setup(config)
   M.state = {}
 
@@ -50,8 +62,16 @@ function M.setup(config)
       warn = profile.warn
     }
 
+    if profile.off ~= nil then
+      M.state[key].off = profile.off
+    end
+
+    if profile.on ~= nil then
+      M.state[key].on = profile.on
+    end
+
     hs.hotkey.bind(config.keyboard_mods.pos, profile.key, function()
-      M.state[key].active = not M.state[key].active
+      toggle(key, not M.state[key].active)
       logState()
     end)
   end
