@@ -86,4 +86,4 @@ hs.eventtap.new({ hs.eventtap.event.types.keyDown }, function(event)
 end):start()
 
 hs.hotkey.bind(config.keyboard_mods.hyper, "f12", function() hs.reload() end)
-hs.alert.show("Hammerspoon Config Reloaded")
+hs.alert.show("Hammerspoon Reloaded")

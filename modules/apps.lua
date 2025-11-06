@@ -4,17 +4,36 @@ local screen = require("modules.screen")
 local M = { state = nil }
 
 local function logState(time)
-  local msg = "SETUP:"
-  for _, v in ipairs((function(t)
+  local lines = {}
+
+  -- Sortowanie state
+  local sortedState = (function(t)
     local arr = {}
     for _, x in pairs(t) do arr[#arr + 1] = x end
     table.sort(arr, function(a, b) return a.order < b.order end)
     return arr
-  end)(M.state)) do
-    msg = msg .. "\n  " .. v.label .. " (" .. v.key .. "): " .. (v.active and "1" or "0")
+  end)(M.state)
+
+  -- Znajdź najdłuższą labelkę (z kluczem)
+  local maxLength = 0
+  for _, row in ipairs(sortedState) do
+    local fullLabel = string.format('[%s] %s', row.key, row.label)
+    if #fullLabel > maxLength then
+      maxLength = #fullLabel
+    end
   end
 
-  logger.log(msg, time)
+  -- Dodaj 1 znak spacingu
+  local spacing = maxLength + 1
+
+  for _, row in ipairs(sortedState) do
+    local status = row.active and "ON" or "OFF"
+    local fullLabel = string.format('[%s] %s', row.key, row.label)
+    local line = string.format("%-" .. spacing .. "s | %-3s", fullLabel, status)
+    table.insert(lines, line)
+  end
+
+  logger.log(table.concat(lines, "\n"), time)
 end
 
 function M.setup(config)
@@ -47,24 +66,19 @@ function M.setup(config)
       for profileKey, profile in pairs(M.state) do
         if app[profileKey] ~= nil then defaulted = false end
         if profile.active and app[profileKey] == false then
-          if (profile.warn ~= nil) then
-            logger.log(profile.warn, 0.5)
-          else
-            logger.log(app.name .. ' not available in ' .. profile.label .. '(' .. profile.key .. ')' .. ' mode.', 0.5)
-          end
           return
         elseif profile.active and app[profileKey] == true then
           run = true
         elseif not profile.active and app[profileKey] == false then
           run = true
-        else
-          table.insert(avain, profile)
+        elseif not profile.active and app[profileKey] == true then
+          table.insert(avain, profile.label)
         end
       end
 
 
       if not defaulted and not run then
-        logger.log(app.name .. ' available in ', 0.5)
+        logger.log(app.name .. ' available in ' .. table.concat(avain, ', '), 0.5)
         return
       end
 
