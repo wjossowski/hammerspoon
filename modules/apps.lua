@@ -3,6 +3,8 @@ local screen = require("modules.screen")
 
 local M = { state = nil }
 
+local log = hs.logger.new('apps', 'debug')
+
 local function logState(time)
   local lines = {}
 
@@ -86,6 +88,7 @@ function M.setup(config)
       for profileKey, profile in pairs(M.state) do
         if app[profileKey] ~= nil then defaulted = false end
         if profile.active and app[profileKey] == false then
+          if profile.warn ~= nil then return logger.logImage(profile.warn.text, profile.warn.image) end
           return
         elseif profile.active and app[profileKey] == true then
           run = true
@@ -98,8 +101,7 @@ function M.setup(config)
 
 
       if not defaulted and not run then
-        logger.log(app.name .. ' available in ' .. table.concat(avain, ', '), 0.5)
-        return
+        return logger.log(app.name .. ' available in ' .. table.concat(avain, ', '), 0.5)
       end
 
       if app.handler then

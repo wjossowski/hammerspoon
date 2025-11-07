@@ -1,6 +1,7 @@
 local screen = require('modules.screen')
 local apps = require("modules.apps")
 local chrome = require("modules.chrome")
+local logger = require("modules.logger")
 
 chrome.setup({
   profiles = {
@@ -11,7 +12,7 @@ chrome.setup({
 
 local config = {
   profiles = {
-    quiet = { order = 1, key = 'q', label = 'Quiet', active = false, warn = 'GO BACK TO WORK SLACKER' },
+    quiet = { order = 1, key = 'q', label = 'WARTOSC', active = false, warn = { text = 'BAMBUSIE JEBANY', image = logger.images.bambus } },
     work = { order = 2, key = 'w', label = 'Work', active = true, off = { 'napravelo' } },
     napravelo = { order = 3, key = 'e', label = 'Napravelo', active = true, on = { 'work' }, off = { 'napravelo_infra', 'napravelo_dbeaver' } },
     napravelo_infra = { order = 4, key = 's', label = 'Napravelo:Infra', active = false, on = { 'napravelo' } },
