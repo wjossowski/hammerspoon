@@ -1,12 +1,8 @@
 local M = {}
 
 M.images = {
-  terry = hs.image.imageFromPath("~/.hammerspoon/assets/terry.webp")
-      :setSize({ w = 640, h = 631 }),
   terry2 = hs.image.imageFromPath("~/.hammerspoon/assets/terry2.png")
       :setSize({ w = 516, h = 516 }),
-  bambus = hs.image.imageFromPath("~/.hammerspoon/assets/sebcel.png")
-      :setSize({ w = 612, h = 572 }),
 }
 
 local style = hs.alert.defaultStyle
