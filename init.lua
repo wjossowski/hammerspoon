@@ -83,7 +83,7 @@ for key, posVals in pairs(positions) do
 end
 
 hs.hotkey.bind(config.keyboard_mods.pos, "]", function() screen.to(0) end)
-hs.hotkey.bind(config.keyboard_mods.pos, "[", function() screen.to(1, { [2] = 1, [3] = 1 }) end)
+hs.hotkey.bind(config.keyboard_mods.pos, "[", function() screen.to(1, { [2] = 0, [3] = 1 }) end)
 hs.hotkey.bind(config.keyboard_mods.pos, "'", function() screen.to(1, { [2] = 1, [3] = 2 }) end)
 
 
